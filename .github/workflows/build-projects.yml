@@ -21,29 +21,41 @@ jobs:
           for dir in images/*/ ; do
             [ -d "$dir" ] || continue
             id=$(basename "$dir")
+
+            # 대표이미지 선택
             cover=""
-            # 대표이미지: cover.* 우선, 없으면 첫 이미지
             for c in "$dir"cover.*; do [ -f "$c" ] && cover=$(basename "$c") && break; done
             if [ -z "$cover" ]; then
               for f in "$dir"*.*; do
                 case "${f##*.}" in jpg|jpeg|png|webp|gif|JPG|JPEG|PNG|WEBP|GIF) cover=$(basename "$f"); break;; esac
               done
             fi
-            # 이미지 리스트 생성
+
+            # 이미지 목록
             imgs=""
             first=1
             for f in "$dir"*.*; do
               case "${f##*.}" in jpg|jpeg|png|webp|gif|JPG|JPEG|PNG|WEBP|GIF)
                 name=$(basename "$f")
-                # cover는 중복 방지 위해 목록에 포함하되 순서상 첫 장이 되도록 정렬은 프론트에서 처리 가능
                 if [ $first -eq 1 ]; then imgs="\"$name\""; first=0; else imgs="$imgs, \"$name\""; fi
               ;;
               esac
             done
             [ -z "$imgs" ] && continue
+
+            # 메타 읽기(옵션)
+            title=""
+            desc=""
+            if [ -f "${dir}title.txt" ]; then
+              title=$(sed ':a;N;$!ba;s/\r//g;s/"/\\"/g;s/\n/ /g' "${dir}title.txt")
+            fi
+            if [ -f "${dir}desc.txt" ]; then
+              desc=$(sed ':a;N;$!ba;s/\r//g;s/"/\\"/g;s/\n/ /g' "${dir}desc.txt")
+            fi
+
             # JSON 출력
             if [ $first_proj -eq 0 ]; then echo "," >> projects.json; fi
-            echo -n "  {\"id\":\"$id\",\"title\":\"$id\",\"cover\":\"$cover\",\"images\":[${imgs}]}" >> projects.json
+            echo -n "  {\"id\":\"$id\",\"title\":\"${title:-$id}\",\"desc\":\"$desc\",\"cover\":\"$cover\",\"images\":[${imgs}]}" >> projects.json
             first_proj=0
           done
           echo -e "\n]" >> projects.json
@@ -52,4 +64,4 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           add: 'projects.json'
-          message: 'Auto-generate projects.json'
+          message: 'Auto-generate projects.json (with titles/descs)'
