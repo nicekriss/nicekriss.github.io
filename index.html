@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Design Spirit 인테리어</title>
   <style>
-    :root { --bg:#0f1115; --panel:#161a22; --line:#242938; --text:#f5f7fa; --muted:#9aa4b2; --accent:#9b87f5; }
+    :root { --bg:#0f1115; --panel:#161a22; --line:#242938; --text:#f5f7fa; --muted:#9aa4b2; }
     *{box-sizing:border-box}
     body{margin:0;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:var(--bg);color:var(--text)}
     header{padding:28px 16px;text-align:center;background:linear-gradient(180deg,#141826,#0f1115);border-bottom:1px solid var(--line)}
@@ -16,14 +16,13 @@
     nav a:hover{background:#1b2130}
     section{max-width:1200px;margin:28px auto;padding:0 16px}
     h2{font-size:22px;margin:0 0 18px}
-    .lead{text-align:center;color:var(--muted);margin-bottom:28px}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
     .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .12s ease}
     .card:hover{transform:translateY(-2px)}
     .thumb{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
     .meta{padding:12px}
-    .title{font-size:15px}
-    .muted{color:var(--muted);font-size:12px;margin-top:6px}
+    .title{font-size:15px;margin-bottom:4px}
+    .desc{font-size:13px;color:var(--muted)}
     footer{text-align:center;color:var(--muted);padding:28px 16px;border-top:1px solid var(--line);margin-top:30px}
 
     /* 라이트박스 */
@@ -50,16 +49,12 @@
 
   <section id="projects">
     <h2>시공 갤러리</h2>
-    <p class="lead">이미지는 <code>images/프로젝트ID/</code> 폴더에 올리면 자동 반영됩니다. 대표이미지는 <code>cover.jpg</code>.</p>
     <div class="grid" id="grid"></div>
   </section>
 
   <section id="contact">
     <h2>문의하기</h2>
-    <p class="lead">
-      전화 <a href="tel:010-1234-5678">010-1234-5678</a> ·
-      이메일 <a href="mailto:info@designspirit.com">info@designspirit.com</a>
-    </p>
+    <p>전화 <a href="tel:010-1234-5678">010-1234-5678</a> · 이메일 <a href="mailto:info@designspirit.com">info@designspirit.com</a></p>
   </section>
 
   <footer>© 2025 Design Spirit</footer>
@@ -82,42 +77,42 @@
     const btnPrev = document.getElementById('btnPrev');
     const btnNext = document.getElementById('btnNext');
 
-    let projects = [];      // [{id,title,cover,images:[]}, ...]
+    let projects = [];
     let cur = { p: -1, i: 0 };
 
-    // 프로젝트 카드 렌더
     function renderGrid() {
       const frag = document.createDocumentFragment();
       projects.forEach((p, idx) => {
         const card = document.createElement('div');
         card.className = 'card';
+
         const img = document.createElement('img');
         img.className = 'thumb';
         img.src = `images/${p.id}/${p.cover}`;
         img.alt = p.title || p.id;
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        const title = document.createElement('div');
-        title.className = 'title';
-        title.textContent = p.title || p.id;
-        const sub = document.createElement('div');
-        sub.className = 'muted';
-        sub.textContent = `${p.images.length}장`;
-        meta.appendChild(title); meta.appendChild(sub);
+
+        const meta = document.createElement('div'); meta.className = 'meta';
+        const title = document.createElement('div'); title.className = 'title'; title.textContent = p.title || p.id;
+        if (p.desc) {
+          const d = document.createElement('div'); d.className = 'desc'; d.textContent = p.desc;
+          meta.appendChild(title); meta.appendChild(d);
+        } else {
+          meta.appendChild(title);
+        }
+
         card.appendChild(img); card.appendChild(meta);
         card.addEventListener('click', () => openLightbox(idx, 0));
         frag.appendChild(card);
       });
-      grid.innerHTML = '';
-      grid.appendChild(frag);
+      grid.innerHTML = ''; grid.appendChild(frag);
     }
 
-    // 라이트박스
     function openLightbox(pIndex, imgIndex) {
       cur.p = pIndex; cur.i = imgIndex;
       const p = projects[cur.p];
       lightImg.src = `images/${p.id}/${p.images[cur.i]}`;
-      counter.textContent = `${cur.i + 1} / ${p.images.length} · ${p.title || p.id}`;
+      const info = p.title ? `${p.title}` : p.id;
+      counter.textContent = `${cur.i + 1} / ${p.images.length} · ${info}`;
       lightbox.classList.add('open');
     }
     function closeLightbox(){ lightbox.classList.remove('open'); }
@@ -135,21 +130,18 @@
       if(e.key==='ArrowRight') next();
     });
 
-    // projects.json 불러오기
     fetch('projects.json', { cache:'no-store' })
       .then(r => r.ok ? r.json() : [])
       .then(list => {
-        // cover가 목록 첫 장이 되도록 정렬(선택)
         projects = list.map(p => {
           const imgs = [...p.images];
-          const i = imgs.indexOf(p.cover);
-          if (i > 0) { const [c] = imgs.splice(i,1); imgs.unshift(c); }
+          const i = imgs.indexOf(p.cover); if (i > 0) { const [c] = imgs.splice(i,1); imgs.unshift(c); }
           return { ...p, images: imgs };
         });
-        if (!projects.length) grid.innerHTML = '<p class="muted">images 폴더에 프로젝트 폴더를 추가하세요.</p>';
+        if (!projects.length) grid.innerHTML = '<p style="color:#999">images/ 폴더에 프로젝트를 추가하세요.</p>';
         else renderGrid();
       })
-      .catch(()=> grid.innerHTML = '<p style="color:#f88">projects.json을 불러오지 못했습니다.</p>');
+      .catch(()=> grid.innerHTML = '<p style="color:red">projects.json 불러오기 실패</p>');
   </script>
 </body>
 </html>
