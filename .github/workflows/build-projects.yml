@@ -45,13 +45,15 @@ jobs:
             done
             [ -z "$imgs" ] && continue
 
-            # meta.txt 읽기
+                        # meta.txt 읽기 (CR/LF 정리 + escape)
             title=""
             desc=""
             if [ -f "${dir}meta.txt" ]; then
-              title=$(grep -i '^title:' "${dir}meta.txt" | sed 's/^title:[[:space:]]*//;s/"/\\"/g')
-              desc=$(grep -i '^desc:' "${dir}meta.txt" | sed 's/^desc:[[:space:]]*//;s/"/\\"/g')
+              # title: / desc: 줄만 뽑고, CR 제거 → 한 줄로 합치고 → \ 와 " 이스케이프
+              title=$(grep -i '^title:' "${dir}meta.txt" | sed 's/^title:[[:space:]]*//; s/\r//g; s/\n/ /g; s/\\/\\\\/g; s/"/\\"/g')
+              desc=$(grep -i '^desc:'  "${dir}meta.txt" | sed 's/^desc:[[:space:]]*//;  s/\r//g; s/\n/ /g; s/\\/\\\\/g; s/"/\\"/g')
             fi
+
 
             # JSON 출력
             if [ $first_proj -eq 0 ]; then echo "," >> projects.json; fi
