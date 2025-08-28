@@ -3,42 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Design Spirit 인테리어</title>
+  <title>제이엘디자인</title>
+  <meta name="description" content="제이엘디자인 — 인테리어 시공 갤러리와 문의">
   <style>
-    :root { --bg:#0f1115; --panel:#161a22; --line:#242938; --text:#f5f7fa; --muted:#9aa4b2; }
+    :root {
+      --bg:#0b0f14; --panel:#121826; --line:#1b2335; --text:#f6f7fb; --muted:#9aa4b2; --brand:#00d4b3;
+    }
     *{box-sizing:border-box}
     body{margin:0;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:var(--bg);color:var(--text)}
-    header{padding:28px 16px;text-align:center;background:linear-gradient(180deg,#141826,#0f1115);border-bottom:1px solid var(--line)}
-    header h1{margin:0 0 6px;font-size:28px}
-    header p{margin:0;color:var(--muted)}
-    nav{display:flex;gap:16px;justify-content:center;padding:12px 16px;border-bottom:1px solid var(--line);background:#10131a;position:sticky;top:0;z-index:5}
-    nav a{color:var(--text);text-decoration:none;padding:6px 10px;border-radius:8px}
-    nav a:hover{background:#1b2130}
-    section{max-width:1200px;margin:28px auto;padding:0 16px}
-    h2{font-size:22px;margin:0 0 18px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-    .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .12s ease}
-    .card:hover{transform:translateY(-2px)}
-    .thumb{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
-    .meta{padding:12px}
-    .title{font-size:15px;margin-bottom:4px}
-    .desc{font-size:13px;color:var(--muted)}
-    footer{text-align:center;color:var(--muted);padding:28px 16px;border-top:1px solid var(--line);margin-top:30px}
+    /* 헤더(히어로) */
+    header{
+      position:relative; padding:72px 16px 56px; text-align:center;
+      background:
+        radial-gradient(1000px 400px at 50% -20%, #1b2540 20%, transparent 60%),
+        linear-gradient(180deg, #0e1320, #0b0f14);
+      border-bottom:1px solid var(--line);
+      overflow:hidden;
+    }
+    header:after{
+      content:""; position:absolute; inset:-40% -10% auto -10%; height:220px;
+      background: conic-gradient(from 120deg, #00d4b3 0 25%, #7c9cf5 25% 50%, #9b87f5 50% 75%, transparent 75% 100%);
+      filter: blur(80px); opacity:.15; pointer-events:none;
+    }
+    h1{margin:0 0 10px; font-size:34px; letter-spacing:.3px}
+    .tagline{margin:0 auto; max-width:720px; color:var(--muted)}
+    nav{display:flex; gap:16px; justify-content:center; padding:12px 16px; border-bottom:1px solid var(--line); background:#0e1422; position:sticky; top:0; z-index:5}
+    nav a{color:var(--text); text-decoration:none; padding:8px 12px; border-radius:10px}
+    nav a:hover{background:#172038}
+    .cta{margin-top:18px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
+    .btn{background:rgba(0,212,179,.12); border:1px solid #1e3b37; color:#eafff9; text-decoration:none; padding:10px 14px; border-radius:10px}
+    .btn:hover{background:rgba(0,212,179,.18)}
+    section{max-width:1200px; margin:28px auto; padding:0 16px}
+    h2{font-size:22px; margin:0 0 18px}
+    /* 카드 그리드 */
+    .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px}
+    .card{background:var(--panel); border:1px solid var(--line); border-radius:16px; overflow:hidden; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease}
+    .card:hover{transform:translateY(-2px); box-shadow:0 10px 24px rgba(0,0,0,.25)}
+    .thumb{width:100%; aspect-ratio:4/3; object-fit:cover; display:block}
+    .meta{padding:12px 14px}
+    .title{font-size:16px; margin-bottom:6px}
+    .desc{font-size:13px; color:var(--muted)}
+    /* 연락처 블록 */
+    .contact-list{display:flex; gap:10px; flex-wrap:wrap}
+    .contact-list a{color:#bfeee6}
+    footer{text-align:center; color:var(--muted); padding:28px 16px; border-top:1px solid var(--line); margin-top:36px}
     /* 라이트박스 */
-    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;padding:24px;z-index:50}
+    .lightbox{position:fixed; inset:0; background:rgba(0,0,0,.92); display:none; align-items:center; justify-content:center; padding:24px; z-index:50}
     .lightbox.open{display:flex}
-    .lightbox img{max-width:95vw;max-height:85vh;border-radius:12px}
-    .btn{position:absolute;top:16px;background:rgba(255,255,255,.12);border:1px solid #ffffff22;color:#fff;padding:8px 12px;border-radius:10px;cursor:pointer;backdrop-filter:blur(4px)}
+    .lightbox img{max-width:95vw; max-height:85vh; border-radius:12px}
+    .ctrl{position:absolute; top:16px; background:rgba(255,255,255,.12); border:1px solid #ffffff22; color:#fff; padding:8px 12px; border-radius:10px; cursor:pointer; backdrop-filter:blur(4px)}
     #btnClose{right:16px}
-    #btnPrev,#btnNext{top:50%;transform:translateY(-50%)}
+    #btnPrev,#btnNext{top:50%; transform:translateY(-50%)}
     #btnPrev{left:16px} #btnNext{right:16px}
-    .counter{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.35);padding:6px 10px;border-radius:8px;font-size:12px}
+    .counter{position:absolute; bottom:18px; left:50%; transform:translateX(-50%); color:#fff; background:rgba(0,0,0,.35); padding:6px 10px; border-radius:8px; font-size:12px}
   </style>
 </head>
 <body>
+  <!-- 사이트 설정: 여기만 바꾸면 제목/연락처가 전체에 반영됩니다 -->
+  <script>
+    const SITE = {
+      name: "제이엘디자인",
+      tagline: "공간을 새롭게, 삶을 아름답게",
+      phone: "010-0000-0000",            // ← 전화번호로 교체
+      email: "hello@jldesign.kr",        // ← 이메일로 교체
+      kakao: "https://pf.kakao.com/",    // ← 카카오채널 URL
+      map: "https://map.naver.com/"      // ← 네이버지도 장소 URL
+    };
+    document.title = SITE.name;
+  </script>
+
   <header>
-    <h1>Design Spirit 인테리어</h1>
-    <p>현장 카드를 클릭하면 해당 현장의 전체 사진을 확인할 수 있습니다.</p>
+    <h1 id="brand">제이엘디자인</h1>
+    <p class="tagline" id="tagline">공간을 새롭게, 삶을 아름답게</p>
+    <div class="cta">
+      <a class="btn" id="btnCall"   href="#">전화 문의</a>
+      <a class="btn" id="btnKakao"  href="#" target="_blank" rel="noopener">카카오톡 상담</a>
+      <a class="btn" id="btnMap"    href="#" target="_blank" rel="noopener">네이버 지도</a>
+      <a class="btn" id="btnEmail"  href="#">이메일 문의</a>
+    </div>
   </header>
 
   <nav>
@@ -53,30 +95,47 @@
 
   <section id="contact">
     <h2>문의하기</h2>
-    <p>전화 <a href="tel:010-1234-5678">010-1234-5678</a> · 이메일 <a href="mailto:info@designspirit.com">info@designspirit.com</a></p>
+    <div class="contact-list" id="contactList"></div>
   </section>
 
-  <footer>© 2025 Design Spirit</footer>
+  <footer>© <span id="year"></span> <span id="brandFoot">제이엘디자인</span></footer>
 
   <!-- 라이트박스 -->
   <div class="lightbox" id="lightbox">
     <img id="lightImg" alt="">
-    <button class="btn" id="btnClose">닫기</button>
-    <button class="btn" id="btnPrev">←</button>
-    <button class="btn" id="btnNext">→</button>
+    <button class="ctrl" id="btnClose">닫기</button>
+    <button class="ctrl" id="btnPrev">←</button>
+    <button class="ctrl" id="btnNext">→</button>
     <div class="counter" id="counter"></div>
   </div>
 
   <script>
-    const grid = document.getElementById('grid');
-    const lightbox = document.getElementById('lightbox');
-    const lightImg = document.getElementById('lightImg');
-    const counter = document.getElementById('counter');
-    const btnClose = document.getElementById('btnClose');
-    const btnPrev = document.getElementById('btnPrev');
-    const btnNext = document.getElementById('btnNext');
+    // 브랜딩/연락처 주입
+    const $ = s => document.querySelector(s);
+    $('#brand').textContent = SITE.name;
+    $('#tagline').textContent = SITE.tagline;
+    $('#brandFoot').textContent = SITE.name;
+    $('#year').textContent = new Date().getFullYear();
+    $('#btnCall').href  = 'tel:' + SITE.phone.replaceAll('-', '');
+    $('#btnEmail').href = 'mailto:' + SITE.email;
+    $('#btnKakao').href = SITE.kakao;
+    $('#btnMap').href   = SITE.map;
+    $('#contactList').innerHTML =
+      `전화 <a href="tel:${SITE.phone.replaceAll('-','')}">${SITE.phone}</a> ·
+       이메일 <a href="mailto:${SITE.email}">${SITE.email}</a> ·
+       <a href="${SITE.kakao}" target="_blank" rel="noopener">카카오톡</a> ·
+       <a href="${SITE.map}" target="_blank" rel="noopener">지도</a>`;
 
-    let projects = [];
+    // 갤러리 렌더
+    const grid = $('#grid');
+    const lightbox = $('#lightbox');
+    const lightImg = $('#lightImg');
+    const counter = $('#counter');
+    const btnClose = $('#btnClose');
+    const btnPrev = $('#btnPrev');
+    const btnNext = $('#btnNext');
+
+    let projects = [];              // [{id,title,desc,cover,images:[]}, ...]
     let cur = { p: -1, i: 0 };
 
     function renderGrid() {
@@ -84,7 +143,6 @@
       projects.forEach((p, idx) => {
         const card = document.createElement('div');
         card.className = 'card';
-
         const img = document.createElement('img');
         img.className = 'thumb';
         img.src = `images/${p.id}/${p.cover}`;
@@ -92,11 +150,8 @@
 
         const meta = document.createElement('div'); meta.className = 'meta';
         const title = document.createElement('div'); title.className = 'title'; title.textContent = p.title || p.id;
-        meta.appendChild(title);
-        if (p.desc) {
-          const d = document.createElement('div'); d.className = 'desc'; d.textContent = p.desc;
-          meta.appendChild(d);
-        }
+        const desc  = document.createElement('div'); desc.className  = 'desc';  desc.textContent  = p.desc || '';
+        meta.appendChild(title); if (p.desc) meta.appendChild(desc);
 
         card.appendChild(img); card.appendChild(meta);
         card.addEventListener('click', () => openLightbox(idx, 0));
@@ -128,31 +183,23 @@
       if(e.key==='ArrowRight') next();
     });
 
-    // projects.json 불러오기 (meta.txt 기반으로 Actions가 생성)
-    fetch('projects.json?v=' + Date.now(), { cache: 'no-store' })
-    .then(r => {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    .then(list => {
-      if (!Array.isArray(list)) throw new Error('JSON is not an array');
-      projects = list.map(p => {
-        const imgs = Array.isArray(p.images) ? [...p.images] : [];
-        const i = imgs.indexOf(p.cover);
-        if (i > 0) { const [c] = imgs.splice(i,1); imgs.unshift(c); }
-        return { ...p, images: imgs };
+    // projects.json 로드 (캐시무시 + 에러표시)
+    fetch('projects.json?v=' + Date.now(), { cache:'no-store' })
+      .then(r => { if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(list => {
+        if (!Array.isArray(list)) throw new Error('JSON is not an array');
+        projects = list.map(p => {
+          const imgs = Array.isArray(p.images) ? [...p.images] : [];
+          const i = imgs.indexOf(p.cover); if (i > 0) { const [c] = imgs.splice(i,1); imgs.unshift(c); }
+          return { ...p, images: imgs };
+        });
+        projects.length ? renderGrid() :
+          grid.innerHTML = '<p style="color:#9aa4b2">images/ 폴더에 프로젝트를 추가하세요.</p>';
+      })
+      .catch(err => {
+        grid.innerHTML = `<p style="color:#f88">projects.json 불러오기 실패: ${String(err)}</p>`;
+        console.error(err);
       });
-      if (!projects.length) {
-        grid.innerHTML = '<p style="color:#999">images/ 폴더에 프로젝트를 추가하세요. (각 폴더에 meta.txt 포함)</p>';
-      } else {
-        renderGrid();
-      }
-    })
-    .catch(err => {
-      grid.innerHTML = `<p style="color:#f88">projects.json 불러오기 실패: ${String(err)}</p>`;
-      console.error(err);
-    });
-</script>
+  </script>
 </body>
 </html>
-
