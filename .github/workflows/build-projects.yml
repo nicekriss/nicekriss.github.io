@@ -43,14 +43,12 @@ jobs:
             done
             [ -z "$imgs" ] && continue
 
-            # 메타 읽기(옵션)
+            # meta.txt 읽기
             title=""
             desc=""
-            if [ -f "${dir}title.txt" ]; then
-              title=$(sed ':a;N;$!ba;s/\r//g;s/"/\\"/g;s/\n/ /g' "${dir}title.txt")
-            fi
-            if [ -f "${dir}desc.txt" ]; then
-              desc=$(sed ':a;N;$!ba;s/\r//g;s/"/\\"/g;s/\n/ /g' "${dir}desc.txt")
+            if [ -f "${dir}meta.txt" ]; then
+              title=$(grep -i '^title:' "${dir}meta.txt" | sed 's/^title:[[:space:]]*//;s/"/\\"/g')
+              desc=$(grep -i '^desc:' "${dir}meta.txt" | sed 's/^desc:[[:space:]]*//;s/"/\\"/g')
             fi
 
             # JSON 출력
@@ -64,4 +62,4 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           add: 'projects.json'
-          message: 'Auto-generate projects.json (with titles/descs)'
+          message: 'Auto-generate projects.json (with meta.txt support)'
