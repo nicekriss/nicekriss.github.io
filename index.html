@@ -24,7 +24,6 @@
     .title{font-size:15px;margin-bottom:4px}
     .desc{font-size:13px;color:var(--muted)}
     footer{text-align:center;color:var(--muted);padding:28px 16px;border-top:1px solid var(--line);margin-top:30px}
-
     /* 라이트박스 */
     .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;padding:24px;z-index:50}
     .lightbox.open{display:flex}
@@ -39,7 +38,7 @@
 <body>
   <header>
     <h1>Design Spirit 인테리어</h1>
-    <p>현장 갤러리를 클릭하면 해당 현장의 전체 사진을 확인할 수 있습니다.</p>
+    <p>현장 카드를 클릭하면 해당 현장의 전체 사진을 확인할 수 있습니다.</p>
   </header>
 
   <nav>
@@ -93,11 +92,10 @@
 
         const meta = document.createElement('div'); meta.className = 'meta';
         const title = document.createElement('div'); title.className = 'title'; title.textContent = p.title || p.id;
+        meta.appendChild(title);
         if (p.desc) {
           const d = document.createElement('div'); d.className = 'desc'; d.textContent = p.desc;
-          meta.appendChild(title); meta.appendChild(d);
-        } else {
-          meta.appendChild(title);
+          meta.appendChild(d);
         }
 
         card.appendChild(img); card.appendChild(meta);
@@ -130,18 +128,20 @@
       if(e.key==='ArrowRight') next();
     });
 
+    // projects.json 불러오기 (meta.txt 기반으로 Actions가 생성)
     fetch('projects.json', { cache:'no-store' })
       .then(r => r.ok ? r.json() : [])
       .then(list => {
         projects = list.map(p => {
+          // cover를 첫 장으로 앞으로
           const imgs = [...p.images];
           const i = imgs.indexOf(p.cover); if (i > 0) { const [c] = imgs.splice(i,1); imgs.unshift(c); }
           return { ...p, images: imgs };
         });
-        if (!projects.length) grid.innerHTML = '<p style="color:#999">images/ 폴더에 프로젝트를 추가하세요.</p>';
+        if (!projects.length) grid.innerHTML = '<p style="color:#999">images/ 폴더에 프로젝트를 추가하세요. (각 폴더에 meta.txt 포함)</p>';
         else renderGrid();
       })
-      .catch(()=> grid.innerHTML = '<p style="color:red">projects.json 불러오기 실패</p>');
+      .catch(()=> grid.innerHTML = '<p style="color:#f88">projects.json 불러오기 실패</p>');
   </script>
 </body>
 </html>
