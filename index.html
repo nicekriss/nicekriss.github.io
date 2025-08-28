@@ -129,19 +129,30 @@
     });
 
     // projects.json 불러오기 (meta.txt 기반으로 Actions가 생성)
-    fetch('projects.json', { cache:'no-store' })
-      .then(r => r.ok ? r.json() : [])
-      .then(list => {
-        projects = list.map(p => {
-          // cover를 첫 장으로 앞으로
-          const imgs = [...p.images];
-          const i = imgs.indexOf(p.cover); if (i > 0) { const [c] = imgs.splice(i,1); imgs.unshift(c); }
-          return { ...p, images: imgs };
-        });
-        if (!projects.length) grid.innerHTML = '<p style="color:#999">images/ 폴더에 프로젝트를 추가하세요. (각 폴더에 meta.txt 포함)</p>';
-        else renderGrid();
-      })
-      .catch(()=> grid.innerHTML = '<p style="color:#f88">projects.json 불러오기 실패</p>');
-  </script>
+    fetch('projects.json?v=' + Date.now(), { cache: 'no-store' })
+    .then(r => {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(list => {
+      if (!Array.isArray(list)) throw new Error('JSON is not an array');
+      projects = list.map(p => {
+        const imgs = Array.isArray(p.images) ? [...p.images] : [];
+        const i = imgs.indexOf(p.cover);
+        if (i > 0) { const [c] = imgs.splice(i,1); imgs.unshift(c); }
+        return { ...p, images: imgs };
+      });
+      if (!projects.length) {
+        grid.innerHTML = '<p style="color:#999">images/ 폴더에 프로젝트를 추가하세요. (각 폴더에 meta.txt 포함)</p>';
+      } else {
+        renderGrid();
+      }
+    })
+    .catch(err => {
+      grid.innerHTML = `<p style="color:#f88">projects.json 불러오기 실패: ${String(err)}</p>`;
+      console.error(err);
+    });
+</script>
 </body>
 </html>
+
