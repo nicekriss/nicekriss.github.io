@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design Spirit 인테리어</title>
+  <style>
+    body { margin: 0; font-family: 'Noto Sans KR', sans-serif; }
+    header { background: #222; color: white; padding: 20px; text-align: center; }
+    nav { background: #444; padding: 10px; text-align: center; }
+    nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: bold; }
+    nav a:hover { text-decoration: underline; }
+    section { padding: 40px 20px; max-width: 1200px; margin: auto; }
+    h2 { text-align: center; margin-bottom: 30px; }
+    .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+    .gallery img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    footer { background: #222; color: white; text-align: center; padding: 20px; margin-top: 40px; }
+    .contact { text-align: center; margin-top: 20px; }
+    .contact a { display: inline-block; margin: 5px; padding: 10px 20px; background: #444; color: white; border-radius: 5px; text-decoration: none; }
+    .contact a:hover { background: #666; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Design Spirit 인테리어</h1>
+    <p>공간을 새롭게, 삶을 아름답게</p>
+  </header>
+
+  <nav>
+    <a href="#about">회사소개</a>
+    <a href="#gallery">시공갤러리</a>
+    <a href="#contact">문의하기</a>
+  </nav>
+
+  <section id="about">
+    <h2>회사소개</h2>
+    <p style="text-align:center; max-width:800px; margin:auto;">
+      Design Spirit은 고객의 라이프스타일에 맞춘 인테리어 솔루션을 제공합니다.<br>
+      사무실, 상업공간, 주거공간까지 차별화된 디자인으로 새로운 가치를 만듭니다.
+    </p>
+  </section>
+
+  <section id="gallery">
+    <h2>시공갤러리</h2>
+    <div class="gallery">
+      <img src="https://picsum.photos/400/300?random=1" alt="갤러리1">
+      <img src="https://picsum.photos/400/300?random=2" alt="갤러리2">
+      <img src="https://picsum.photos/400/300?random=3" alt="갤러리3">
+      <img src="https://picsum.photos/400/300?random=4" alt="갤러리4">
+      <img src="https://picsum.photos/400/300?random=5" alt="갤러리5">
+      <img src="https://picsum.photos/400/300?random=6" alt="갤러리6">
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>문의하기</h2>
+    <div class="contact">
+      <p>전화: <a href="tel:010-1234-5678">010-1234-5678</a></p>
+      <p>이메일: <a href="mailto:info@designspirit.com">info@designspirit.com</a></p>
+      <a href="https://map.naver.com">네이버 지도 보기</a>
+      <a href="https://pf.kakao.com">카카오톡 상담</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Design Spirit. All rights reserved.</p>
+  </footer>
+</body>
+</html>
