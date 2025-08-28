@@ -1,10 +1,12 @@
-name: Build projects manifest
+name: Build projects manifest (with watermark)
 permissions:
   contents: write
+
 on:
   push:
     paths:
       - 'images/**'
+      - 'assets/**'
       - '.github/workflows/build-projects.yml'
   workflow_dispatch:
 
@@ -14,17 +16,46 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Generate projects.json
+      - name: Generate watermarked images + projects.json
         shell: bash
         run: |
-          set -e
+          set -euo pipefail
+          shopt -s nullglob
+
+          OUT_BASE="wm_images"
+          mkdir -p "$OUT_BASE"
+
+          # 워터마크 소스 결정
+          if [ -f assets/watermark.svg ]; then
+            WM_SRC="assets/watermark.svg"
+          elif [ -f assets/watermark.png ]; then
+            WM_SRC="assets/watermark.png"
+          else
+            echo "No watermark asset found in assets/. Create assets/watermark.svg" >&2
+            WM_SRC=""
+          fi
+
+          # magick/convert 중 가능한 명령 사용
+          MAGICK=$(command -v magick || true)
+          CONVERT=$(command -v convert || true)
+          if [ -n "$MAGICK" ]; then
+            run_wm () { magick "$@"; }
+          elif [ -n "$CONVERT" ]; then
+            run_wm () { convert "$@"; }
+          else
+            echo "ImageMagick not found on runner" >&2
+            exit 1
+          fi
+
           echo "[" > projects.json
           first_proj=1
+
           for dir in images/*/ ; do
             [ -d "$dir" ] || continue
             id=$(basename "$dir")
+            mkdir -p "$OUT_BASE/$id"
 
-            # 대표이미지 선택
+            # 대표 찾기
             cover=""
             for c in "$dir"cover.*; do [ -f "$c" ] && cover=$(basename "$c") && break; done
             if [ -z "$cover" ]; then
@@ -33,27 +64,33 @@ jobs:
               done
             fi
 
-            # 이미지 목록
+            # 이미지 목록 + 워터마크 생성
             imgs=""
             first=1
-            for f in "$dir"*.*; do
-              case "${f##*.}" in jpg|jpeg|png|webp|gif|JPG|JPEG|PNG|WEBP|GIF)
-                name=$(basename "$f")
-                if [ $first -eq 1 ]; then imgs="\"$name\""; first=0; else imgs="$imgs, \"$name\""; fi
-              ;;
-              esac
-            done
+            while IFS= read -r -d '' f; do
+              base=$(basename "$f")
+              ext="${base##*.}"
+              # 워터마크 적용(오른쪽 아래, 30% 불투명, 크기 = 원본 가로의 약 18%)
+              if [ -n "$WM_SRC" ]; then
+                run_wm "$f" \( "$WM_SRC" -resize 18% -alpha set -channel A -evaluate set 30% \) \
+                  -gravity southeast -geometry +24+24 -composite "$OUT_BASE/$id/$base"
+              else
+                # 워터마크 파일이 없으면 그냥 복사
+                cp "$f" "$OUT_BASE/$id/$base"
+              fi
+
+              if [ $first -eq 1 ]; then imgs="\"$base\""; first=0; else imgs="$imgs, \"$base\""; fi
+            done < <(find "$dir" -maxdepth 1 -type f -iregex '.*\.\(jpg\|jpeg\|png\|webp\|gif\)$' -print0 | sort -z)
+
             [ -z "$imgs" ] && continue
 
-                        # meta.txt 읽기 (CR/LF 정리 + escape)
+            # meta.txt
             title=""
             desc=""
             if [ -f "${dir}meta.txt" ]; then
-              # title: / desc: 줄만 뽑고, CR 제거 → 한 줄로 합치고 → \ 와 " 이스케이프
               title=$(grep -i '^title:' "${dir}meta.txt" | sed 's/^title:[[:space:]]*//; s/\r//g; s/\n/ /g; s/\\/\\\\/g; s/"/\\"/g')
               desc=$(grep -i '^desc:'  "${dir}meta.txt" | sed 's/^desc:[[:space:]]*//;  s/\r//g; s/\n/ /g; s/\\/\\\\/g; s/"/\\"/g')
             fi
-
 
             # JSON 출력
             if [ $first_proj -eq 0 ]; then echo "," >> projects.json; fi
@@ -62,8 +99,8 @@ jobs:
           done
           echo -e "\n]" >> projects.json
 
-      - name: Commit manifest
+      - name: Commit manifest and watermarked images
         uses: EndBug/add-and-commit@v9
         with:
-          add: 'projects.json'
-          message: 'Auto-generate projects.json (with meta.txt support)'
+          add: 'projects.json wm_images'
+          message: 'Auto: watermark & projects.json'
