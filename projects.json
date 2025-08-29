@@ -1,4 +1,5 @@
 [
   {"id":"flowlap","title":"10평대 PT샵","desc":"직선형 라인조명과 간접조명으로 은은한 분위기를 연출한 PT샵입니다","cover":"cover.jpg","images":["cover.jpg", "flow (1).jpg", "flow (2).jpg", "flow (3).jpg", "flow (4).jpg", "flow (6).jpg", "flow (7).jpg", "flow (8).jpg", "flow (9).jpg"]},
+  {"id":"remodel01","title":"오피스텔 리모델링","desc":"복층 오피스텔 리모델링 현장입니다","cover":"cover.jpg","images":["cover.jpg", "remodel (1).jpg", "remodel (2).jpg", "remodel (3).jpg", "remodel (4).jpg", "remodel (5).jpg", "remodel (6).jpg", "remodel (8).jpg"]},
   {"id":"samsan_neon","title":"네온사인","desc":"삼산체육관 핑크스파이더 배구 행사 간판","cover":"cover.jpg","images":["1.jpg", "cover.jpg"]}
 ]
