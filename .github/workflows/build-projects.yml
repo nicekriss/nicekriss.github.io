@@ -16,6 +16,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # ⬇️ 워터마크 도구 설치
+      - name: Install ImageMagick (and SVG support)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick librsvg2-bin
+
       - name: Generate watermarked images + projects.json
         shell: bash
         run: |
@@ -25,17 +31,19 @@ jobs:
           OUT_BASE="wm_images"
           mkdir -p "$OUT_BASE"
 
-          # 워터마크 소스 결정
+          # 워터마크 소스 결정 (assets/ 에 두기)
           if [ -f assets/watermark.svg ]; then
-            WM_SRC="assets/watermark.svg"
+            # SVG는 PNG로 임시 변환 (투명 유지)
+            rsvg-convert -w 1200 -h 400 assets/watermark.svg -o /tmp/wm.png
+            WM_SRC="/tmp/wm.png"
           elif [ -f assets/watermark.png ]; then
             WM_SRC="assets/watermark.png"
           else
-            echo "No watermark asset found in assets/. Create assets/watermark.svg" >&2
+            echo "No watermark found (assets/watermark.svg or .png). Proceeding without watermark." >&2
             WM_SRC=""
           fi
 
-          # magick/convert 중 가능한 명령 사용
+          # 사용할 명령 결정
           MAGICK=$(command -v magick || true)
           CONVERT=$(command -v convert || true)
           if [ -n "$MAGICK" ]; then
@@ -43,7 +51,7 @@ jobs:
           elif [ -n "$CONVERT" ]; then
             run_wm () { convert "$@"; }
           else
-            echo "ImageMagick not found on runner" >&2
+            echo "ImageMagick still not found" >&2
             exit 1
           fi
 
@@ -55,7 +63,7 @@ jobs:
             id=$(basename "$dir")
             mkdir -p "$OUT_BASE/$id"
 
-            # 대표 찾기
+            # 대표 이미지
             cover=""
             for c in "$dir"cover.*; do [ -f "$c" ] && cover=$(basename "$c") && break; done
             if [ -z "$cover" ]; then
@@ -64,18 +72,18 @@ jobs:
               done
             fi
 
-            # 이미지 목록 + 워터마크 생성
+            # 이미지 워터마크 생성 (없는 경우엔 복사)
             imgs=""
             first=1
             while IFS= read -r -d '' f; do
               base=$(basename "$f")
-              ext="${base##*.}"
-              # 워터마크 적용(오른쪽 아래, 30% 불투명, 크기 = 원본 가로의 약 18%)
               if [ -n "$WM_SRC" ]; then
-                run_wm "$f" \( "$WM_SRC" -resize 18% -alpha set -channel A -evaluate set 30% \) \
-                  -gravity southeast -geometry +24+24 -composite "$OUT_BASE/$id/$base"
+                # 오른쪽 아래, 워터마크 가로 18%, 투명도 30%
+                run_wm "$f" \( "$WM_SRC" -alpha set -channel A -evaluate set 30% \) \
+                  -gravity southeast -resize 100% \
+                  \( "$WM_SRC" -resize 18% \) -gravity southeast -geometry +24+24 -composite \
+                  "$OUT_BASE/$id/$base"
               else
-                # 워터마크 파일이 없으면 그냥 복사
                 cp "$f" "$OUT_BASE/$id/$base"
               fi
 
@@ -84,15 +92,14 @@ jobs:
 
             [ -z "$imgs" ] && continue
 
-            # meta.txt
-            title=""
-            desc=""
+            # meta.txt -> title/desc
+            title=""; desc=""
             if [ -f "${dir}meta.txt" ]; then
               title=$(grep -i '^title:' "${dir}meta.txt" | sed 's/^title:[[:space:]]*//; s/\r//g; s/\n/ /g; s/\\/\\\\/g; s/"/\\"/g')
-              desc=$(grep -i '^desc:'  "${dir}meta.txt" | sed 's/^desc:[[:space:]]*//;  s/\r//g; s/\n/ /g; s/\\/\\\\/g; s/"/\\"/g')
+              desc=$(grep -i '^desc:'  "${dir}meta.txt" | sed  's/^desc:[[:space:]]*//;  s/\r//g; s/\n/ /g; s/\\/\\\\/g; s/"/\\"/g')
             fi
 
-            # JSON 출력
+            # JSON 레코드
             if [ $first_proj -eq 0 ]; then echo "," >> projects.json; fi
             echo -n "  {\"id\":\"$id\",\"title\":\"${title:-$id}\",\"desc\":\"$desc\",\"cover\":\"$cover\",\"images\":[${imgs}]}" >> projects.json
             first_proj=0
