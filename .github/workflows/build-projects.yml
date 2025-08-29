@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # ⬇️ 워터마크 도구 설치
+      # ImageMagick + SVG 변환기 설치
       - name: Install ImageMagick (and SVG support)
         run: |
           sudo apt-get update
@@ -31,29 +31,21 @@ jobs:
           OUT_BASE="wm_images"
           mkdir -p "$OUT_BASE"
 
-          # 워터마크 소스 결정 (assets/ 에 두기)
-          if [ -f assets/watermark.svg ]; then
-            # SVG는 PNG로 임시 변환 (투명 유지)
-            rsvg-convert -w 1200 -h 400 assets/watermark.svg -o /tmp/wm.png
-            WM_SRC="/tmp/wm.png"
-          elif [ -f assets/watermark.png ]; then
+          # 워터마크 파일 결정 (SVG면 PNG로 1회 변환)
+          if [ -f assets/watermark.png ]; then
             WM_SRC="assets/watermark.png"
+          elif [ -f assets/watermark.svg ]; then
+            rsvg-convert -w 1200 assets/watermark.svg -o /tmp/wm.png
+            WM_SRC="/tmp/wm.png"
           else
-            echo "No watermark found (assets/watermark.svg or .png). Proceeding without watermark." >&2
+            echo "::warning::No watermark found (assets/watermark.svg or .png). Proceeding without watermark."
             WM_SRC=""
           fi
+          echo "Using watermark: ${WM_SRC:-none}"
 
-          # 사용할 명령 결정
-          MAGICK=$(command -v magick || true)
-          CONVERT=$(command -v convert || true)
-          if [ -n "$MAGICK" ]; then
-            run_wm () { magick "$@"; }
-          elif [ -n "$CONVERT" ]; then
-            run_wm () { convert "$@"; }
-          else
-            echo "ImageMagick still not found" >&2
-            exit 1
-          fi
+          # 합성 파라미터
+          WM_PCT=18      # 입력 이미지 가로의 18%
+          WM_OPACITY=30  # 30% 불투명도
 
           echo "[" > projects.json
           first_proj=1
@@ -63,7 +55,7 @@ jobs:
             id=$(basename "$dir")
             mkdir -p "$OUT_BASE/$id"
 
-            # 대표 이미지
+            # 대표 이미지 탐색
             cover=""
             for c in "$dir"cover.*; do [ -f "$c" ] && cover=$(basename "$c") && break; done
             if [ -z "$cover" ]; then
@@ -72,16 +64,21 @@ jobs:
               done
             fi
 
-            # 이미지 워터마크 생성 (없는 경우엔 복사)
             imgs=""
             first=1
+
+            # 이미지들 처리
             while IFS= read -r -d '' f; do
               base=$(basename "$f")
+
               if [ -n "$WM_SRC" ]; then
-                # 오른쪽 아래, 워터마크 가로 18%, 투명도 30%
-                run_wm "$f" \( "$WM_SRC" -alpha set -channel A -evaluate set 30% \) \
-                  -gravity southeast -resize 100% \
-                  \( "$WM_SRC" -resize 18% \) -gravity southeast -geometry +24+24 -composite \
+                # 입력 폭 측정 → 워터마크 폭 계산(퍼센트)
+                W=$(identify -format "%w" "$f")
+                WM_W=$(( W * WM_PCT / 100 ))
+                # 단일 괄호로 오버레이 + 투명도
+                magick "$f" \
+                  \( "$WM_SRC" -resize "${WM_W}x" -alpha on -channel A -evaluate set ${WM_OPACITY}% \) \
+                  -gravity southeast -compose over -geometry +24+24 -composite \
                   "$OUT_BASE/$id/$base"
               else
                 cp "$f" "$OUT_BASE/$id/$base"
@@ -92,7 +89,7 @@ jobs:
 
             [ -z "$imgs" ] && continue
 
-            # meta.txt -> title/desc
+            # meta.txt → title/desc
             title=""; desc=""
             if [ -f "${dir}meta.txt" ]; then
               title=$(grep -i '^title:' "${dir}meta.txt" | sed 's/^title:[[:space:]]*//; s/\r//g; s/\n/ /g; s/\\/\\\\/g; s/"/\\"/g')
