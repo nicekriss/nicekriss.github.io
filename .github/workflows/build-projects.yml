@@ -26,16 +26,17 @@ jobs:
         run: |
           set -euo pipefail
           shopt -s nullglob
-          set -x
 
           OUT_BASE="wm_images"
           mkdir -p "$OUT_BASE"
 
-          # 워터마크 원본 결정 (SVG → PNG 1회 변환)
+          # --- 워터마크 원본 결정 (SVG면 PNG로 변환 + 알파 강제) ---
           if [ -f assets/watermark.png ]; then
             WM_SRC="assets/watermark.png"
           elif [ -f assets/watermark.svg ]; then
+            # rsvg-convert 결과가 투명 보장 안될 수 있어 후처리로 알파/배경 고정
             rsvg-convert -w 1200 assets/watermark.svg -o /tmp/wm.png
+            convert /tmp/wm.png -alpha set -background none /tmp/wm.png
             WM_SRC="/tmp/wm.png"
           else
             echo "::warning::No watermark found (assets/watermark.svg or .png). Proceeding without watermark."
@@ -43,8 +44,9 @@ jobs:
           fi
           echo "Using watermark: ${WM_SRC:-none}"
 
-          WM_PCT=18      # 입력 가로의 18%
-          WM_OPACITY=30  # 30% 불투명도
+          # --- 합성 파라미터 ---
+          WM_PCT=18      # 입력 이미지 가로의 18%
+          WM_ALPHA=0.30  # 30% 가시도(알파 multiply)
 
           echo "[" > projects.json
           first_proj=1
@@ -71,13 +73,13 @@ jobs:
               base=$(basename "$f")
 
               if [ -n "$WM_SRC" ]; then
-                # 폭 측정 → 워터마크 폭 계산
+                # 입력 폭 측정 → 워터마크 폭 계산
                 W=$(identify -format "%w" "$f")
                 WM_W=$(( W * WM_PCT / 100 ))
 
-                # ImageMagick v6: convert 사용
+                # ImageMagick v6: convert 사용, 알파·배경 확정
                 convert "$f" \
-                  \( "$WM_SRC" -resize "${WM_W}x" -alpha on -channel A -evaluate set ${WM_OPACITY}% \) \
+                  \( "$WM_SRC" -resize "${WM_W}x" -background none -alpha set -channel A -evaluate multiply "$WM_ALPHA" \) \
                   -gravity southeast -geometry +24+24 -compose over -composite \
                   "$OUT_BASE/$id/$base"
               else
@@ -89,12 +91,14 @@ jobs:
 
             [ -z "$imgs" ] && continue
 
+            # meta.txt → title/desc
             title=""; desc=""
             if [ -f "${dir}meta.txt" ]; then
               title=$(grep -i '^title:' "${dir}meta.txt" | sed 's/^title:[[:space:]]*//; s/\r//g; s/\n/ /g; s/\\/\\\\/g; s/"/\\"/g')
               desc=$(grep -i '^desc:'  "${dir}meta.txt" | sed  's/^desc:[[:space:]]*//;  s/\r//g; s/\n/ /g; s/\\/\\\\/g; s/"/\\"/g')
             fi
 
+            # JSON 레코드
             if [ $first_proj -eq 0 ]; then echo "," >> projects.json; fi
             echo -n "  {\"id\":\"$id\",\"title\":\"${title:-$id}\",\"desc\":\"$desc\",\"cover\":\"$cover\",\"images\":[${imgs}]}" >> projects.json
             first_proj=0
