@@ -1,724 +1,389 @@
- (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/index.html b/index.html
-index c2639d7d588e0aaedab3d3a144b98d49bee49610..137c15ab3c20acbb31b93e279bf9656fcce02820 100644
---- a/index.html
-+++ b/index.html
-@@ -1,189 +1,526 @@
--<!DOCTYPE html>
--<html lang="ko">
--<head>
--  <meta charset="UTF-8" />
--  <meta name="viewport" content="width=device-width, initial-scale=1" />
--  <title>제이엘디자인</title>
--  <meta name="description" content="제이엘디자인 — 인테리어 시공 갤러리와 문의">
--  <link rel="icon" href="favicon.svg" type="image/svg+xml">
--  <!-- Open Graph -->
--  <meta property="og:title" content="제이엘디자인">
--  <meta property="og:description" content="공간을 새롭게, 삶을 아름답게">
--  <meta property="og:type" content="website">
--  <meta property="og:url" content="https://nicekriss.github.io/">
--  <style>
--    :root{--bg:#0b0f14;--panel:#121826;--line:#1b2335;--text:#f6f7fb;--muted:#9aa4b2;--brand:#00d4b3}
--    *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:var(--bg);color:var(--text)}
--    header{position:relative;padding:72px 16px 56px;text-align:center;background:
--      radial-gradient(1000px 400px at 50% -20%, #1b2540 20%, transparent 60%),
--      linear-gradient(180deg,#0e1320,#0b0f14);border-bottom:1px solid var(--line);overflow:hidden}
--    header:after{content:"";position:absolute;inset:-40% -10% auto -10%;height:220px;
--      background:conic-gradient(from 120deg,#00d4b3 0 25%,#7c9cf5 25% 50%,#9b87f5 50% 75%,transparent 75% 100%);
--      filter:blur(80px);opacity:.15;pointer-events:none}
--    h1{margin:10px 0 6px;font-size:34px;letter-spacing:.3px}
--    .tagline{margin:0 auto;max-width:720px;color:var(--muted)}
--    #logo{height:64px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.25))}
--    nav{display:flex;gap:16px;justify-content:center;padding:12px 16px;border-bottom:1px solid var(--line);background:#0e1422;position:sticky;top:0;z-index:5}
--    nav a{color:var(--text);text-decoration:none;padding:8px 12px;border-radius:10px}
--    nav a:hover{background:#172038}
--    .cta{margin-top:18px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
--    .btn{background:rgba(0,212,179,.12);border:1px solid #1e3b37;color:#eafff9;text-decoration:none;padding:10px 14px;border-radius:10px}
--    .btn:hover{background:rgba(0,212,179,.18)}
--    section{max-width:1200px;margin:28px auto;padding:0 16px}
--    h2{font-size:22px;margin:0 0 18px}
--    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
--    .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
--    .card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.25)}
--    .thumb{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;filter:saturate(1.02)}
--    .meta{padding:12px 14px}
--    .title{font-size:16px;margin-bottom:6px}
--    .desc{font-size:13px;color:var(--muted)}
--    .contact-list{display:flex;gap:10px;flex-wrap:wrap}.contact-list a{color:#bfeee6}
--    footer{text-align:center;color:var(--muted);padding:28px 16px;border-top:1px solid var(--line);margin-top:36px}
--    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;padding:24px;z-index:50}
--    .lightbox.open{display:flex}.lightbox img{max-width:95vw;max-height:85vh;border-radius:12px}
--    .ctrl{position:absolute;top:16px;background:rgba(255,255,255,.12);border:1px solid #ffffff22;color:#fff;padding:8px 12px;border-radius:10px;cursor:pointer;backdrop-filter:blur(4px)}
--    #btnClose{right:16px}#btnPrev,#btnNext{top:50%;transform:translateY(-50%)}#btnPrev{left:16px}#btnNext{right:16px}
--    .counter{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.35);padding:6px 10px;border-radius:8px;font-size:12px}
--    @media (prefers-reduced-motion: reduce){.card{transition:none}}
--  </style>
--</head>
--<body>
--  <!-- ▼ 사이트 기본 정보만 바꾸면 전역 반영 -->
--  <script>
--    const SITE = {
--      name   : "제이엘디자인",
--      tagline: "공간을 새롭게, 삶을 아름답게",
--      phone  : "010-6436-6401",
--      email  : "jldesign77@naver.com",
--      kakao  : "http://pf.kakao.com/_xeigDxj/chat"
--    };
--    const IMG_BASE = "wm_images";   // 워터마크 이미지 루트
--    const IMG_FALLBACK = "images";  // 폴백 루트
--    document.title = SITE.name;
--  </script>
--
--  <header>
--    <img id="logo" src="jl_monogram_luxe.svg" alt="제이엘디자인 로고" decoding="async" loading="eager">
--    <h1 id="brand">제이엘디자인</h1>
--    <p class="tagline" id="tagline">공간을 새롭게, 삶을 아름답게</p>
--    <div class="cta" aria-label="빠른 문의">
--      <a class="btn" id="btnCall"   href="#" aria-label="전화 걸기">전화 문의</a>
--      <a class="btn" id="btnKakao"  href="http://pf.kakao.com/_xeigDxj/chat" target="_blank" rel="noopener">카카오톡 상담</a>
--      <a class="btn" id="btnEmail"  href="#" aria-label="이메일 보내기">이메일 문의</a>
--    </div>
--  </header>
--
--  <nav role="navigation" aria-label="주요 메뉴">
--    <a href="#projects" aria-current="page">시공 갤러리</a>
--    <a href="#contact">문의하기</a>
--  </nav>
--
--  <section id="projects">
--    <h2>시공 갤러리</h2>
--    <div class="grid" id="grid" aria-live="polite"></div>
--  </section>
--
--  <section id="contact">
--    <h2>문의하기</h2>
--    <div class="contact-list" id="contactList"></div>
--  </section>
--
--  <footer>© <span id="year"></span> <span id="brandFoot">제이엘디자인</span></footer>
--
--  <!-- 라이트박스 -->
--  <div class="lightbox" id="lightbox" aria-modal="true" role="dialog" aria-label="이미지 보기">
--    <img id="lightImg" alt="">
--    <button class="ctrl" id="btnClose">닫기</button>
--    <button class="ctrl" id="btnPrev" aria-label="이전 이미지">←</button>
--    <button class="ctrl" id="btnNext" aria-label="다음 이미지">→</button>
--    <div class="counter" id="counter" aria-live="polite"></div>
--  </div>
--
--  <script>
--    // 초기 세팅
--    const $=s=>document.querySelector(s);
--    const logo=$('#logo'); logo.onerror=()=>logo.style.display='none';
--    $('#brand').textContent=SITE.name; $('#tagline').textContent=SITE.tagline;
--    $('#brandFoot').textContent=SITE.name; $('#year').textContent=new Date().getFullYear();
--    $('#btnCall').href='tel:'+SITE.phone.replaceAll('-',''); $('#btnEmail').href='mailto:'+SITE.email; $('#btnKakao').href=SITE.kakao;
--    $('#contactList').innerHTML=`전화 <a href="tel:${SITE.phone.replaceAll('-','')}">${SITE.phone}</a> · 이메일 <a href="mailto:${SITE.email}">${SITE.email}</a> · <a href="${SITE.kakao}" target="_blank" rel="noopener">카카오톡</a>`;
--
--    // 갤러리 렌더
--    const grid=$('#grid'), lightbox=$('#lightbox'), lightImg=$('#lightImg'), counter=$('#counter');
--    const btnClose=$('#btnClose'), btnPrev=$('#btnPrev'), btnNext=$('#btnNext');
--
--    let projects=[]; let cur={p:-1,i:0};
--
--    function setImgWithFallback(el, primary, fallback){
--      el.src=primary; el.onerror=()=>{el.onerror=null; el.src=fallback;}
--    }
--
--    function card(p, idx){
--      const wrap=document.createElement('article'); wrap.className='card'; wrap.tabIndex=0; wrap.setAttribute('aria-label',(p.title||p.id)+' 보기');
--      const img=document.createElement('img'); img.className='thumb'; img.decoding='async'; img.loading='lazy';
--      setImgWithFallback(img, `${IMG_BASE}/${p.id}/${p.cover}`, `${IMG_FALLBACK}/${p.id}/${p.cover}`);
--      img.alt=p.title||p.id;
--      const meta=document.createElement('div'); meta.className='meta';
--      const t=document.createElement('div'); t.className='title'; t.textContent=p.title||p.id;
--      const d=document.createElement('div'); d.className='desc'; d.textContent=p.desc||'';
--      meta.appendChild(t); if(p.desc) meta.appendChild(d);
--      wrap.append(img, meta);
--      const open=()=>openLightbox(idx,0);
--      wrap.addEventListener('click', open);
--      wrap.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' ') open(); });
--      return wrap;
--    }
--
--    function render(){
--      const frag=document.createDocumentFragment();
--      projects.forEach((p,idx)=>frag.appendChild(card(p,idx)));
--      grid.innerHTML=''; grid.appendChild(frag);
--    }
--
--    function openLightbox(pIndex,imgIndex){
--      cur.p=pIndex; cur.i=imgIndex;
--      const p=projects[cur.p];
--      setImgWithFallback(lightImg, `${IMG_BASE}/${p.id}/${p.images[cur.i]}`, `${IMG_FALLBACK}/${p.id}/${p.images[cur.i]}`);
--      counter.textContent=`${cur.i+1} / ${p.images.length} · ${p.title||p.id}`;
--      lightbox.classList.add('open');
--    }
--    function closeLightbox(){ lightbox.classList.remove('open'); }
--    function prev(){ const p=projects[cur.p]; cur.i=(cur.i-1+p.images.length)%p.images.length; openLightbox(cur.p,cur.i); }
--    function next(){ const p=projects[cur.p]; cur.i=(cur.i+1)%p.images.length; openLightbox(cur.p,cur.i); }
--
--    btnClose.onclick=closeLightbox; btnPrev.onclick=prev; btnNext.onclick=next;
--    lightbox.addEventListener('click',e=>{ if(e.target===lightbox) closeLightbox(); });
--    window.addEventListener('keydown',e=>{ if(!lightbox.classList.contains('open')) return;
--      if(e.key==='Escape') closeLightbox(); if(e.key==='ArrowLeft') prev(); if(e.key==='ArrowRight') next();
--    });
--
--    // 모바일 스와이프 제스처
--    (()=>{ let sx=0,dx=0;
--      lightbox.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
--      lightbox.addEventListener('touchmove',e=>{dx=e.touches[0].clientX-sx;},{passive:true});
--      lightbox.addEventListener('touchend',()=>{ if(Math.abs(dx)>40){ dx<0?next():prev(); } sx=dx=0; });
--    })();
--
--    // projects.json 로드
--    fetch('projects.json?v='+Date.now(),{cache:'no-store'})
--      .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
--      .then(list=>{
--        if(!Array.isArray(list)) throw new Error('JSON is not an array');
--        // cover를 첫 번째로 보장
--        projects=list.map(p=>{
--          const imgs=Array.isArray(p.images)?[...p.images]:[];
--          const i=imgs.indexOf(p.cover); if(i>0){ const [c]=imgs.splice(i,1); imgs.unshift(c); }
--          return {...p, images:imgs};
--        });
--        // 최신 항목이 위로 오도록 뒤집기(원치 않으면 주석)
--        projects.reverse();
--        projects.length?render():grid.innerHTML='<p style="color:#9aa4b2">images/ 폴더에 프로젝트를 추가하세요. (각 폴더에 meta.txt 포함)</p>';
--      })
--      .catch(err=>{
--        grid.innerHTML=`<p style="color:#f88">projects.json 불러오기 실패: ${String(err)}</p>`;
--        console.error(err);
--      });
--  </script>
--</body>
--</html>
-+<!DOCTYPE html>
-+<html lang="ko">
-+<head>
-+  <meta charset="UTF-8" />
-+  <meta name="viewport" content="width=device-width, initial-scale=1" />
-+  <title>제이엘디자인</title>
-+  <meta name="description" content="제이엘디자인 — 인테리어 디자인 포트폴리오와 상담 안내">
-+  <meta property="og:title" content="제이엘디자인">
-+  <meta property="og:description" content="감각적인 인테리어 포트폴리오와 상담 안내">
-+  <meta property="og:type" content="website">
-+  <meta property="og:url" content="https://nicekriss.github.io/">
-+  <style>
-+    :root{
-+      --bg:#f7f1ea;
-+      --surface:#fffdf9;
-+      --surface-strong:#f0e4d8;
-+      --text:#241c18;
-+      --muted:#73665d;
-+      --line:#dfd2c5;
-+      --brand:#7b5a45;
-+      --brand-dark:#533c2f;
-+      --shadow:0 18px 50px rgba(48, 33, 24, .10);
-+      --radius:24px;
-+    }
-+    *{box-sizing:border-box}
-+    html{scroll-behavior:smooth}
-+    body{margin:0;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:var(--bg);color:var(--text)}
-+    img{max-width:100%;display:block}
-+    a{text-decoration:none;color:inherit}
-+    .container{max-width:1180px;margin:0 auto;padding:0 20px}
-+    .section{padding:72px 0}
-+    .eyebrow{display:inline-block;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);margin-bottom:14px}
-+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 18px;border-radius:999px;font-weight:700;transition:.2s ease;border:1px solid transparent;cursor:pointer;font:inherit}
-+    .btn.primary{background:var(--brand-dark);color:#fff}
-+    .btn.secondary{background:#fff;border-color:var(--line);color:var(--brand-dark)}
-+    .btn:hover{transform:translateY(-1px)}
-+
-+    .hero{padding:28px 0 80px;background:linear-gradient(180deg,#fbf7f2 0%,#f7f1ea 100%)}
-+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:8px 0 32px}
-+    .brand{display:flex;align-items:center;gap:12px}
-+    #logo{width:56px;height:56px;border-radius:18px;background:#fff;padding:8px;box-shadow:var(--shadow)}
-+    .brand-text strong{display:block;font-size:18px}
-+    .brand-text span{color:var(--muted);font-size:13px}
-+    nav{display:flex;gap:10px;flex-wrap:wrap}
-+    nav a{padding:10px 14px;border-radius:999px;color:var(--muted)}
-+    nav a:hover{background:rgba(255,255,255,.8);color:var(--brand-dark)}
-+
-+    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:stretch}
-+    .hero-copy,.hero-visual,.panel{background:var(--surface);border:1px solid var(--line);border-radius:32px;box-shadow:var(--shadow)}
-+    .hero-copy{padding:44px}
-+    .hero-copy h1{font-size:clamp(38px,5vw,68px);line-height:1.05;letter-spacing:-.03em;margin:0 0 18px;font-family:Georgia,serif}
-+    .hero-copy p{margin:0;color:var(--muted);line-height:1.8;font-size:16px}
-+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
-+    .hero-points{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:28px}
-+    .hero-points div{padding:16px;border-radius:20px;background:#fcf8f3;border:1px solid var(--line)}
-+    .hero-points strong{display:block;margin-bottom:6px;font-size:15px}
-+    .hero-points span{font-size:13px;color:var(--muted);line-height:1.6}
-+    .hero-visual{overflow:hidden;min-height:520px;background:
-+      linear-gradient(180deg, rgba(36,28,24,.12), rgba(36,28,24,.42)),
-+      url('wm_images/flowlap/cover.jpg') center/cover no-repeat;position:relative}
-+    .hero-visual .caption{position:absolute;left:26px;right:26px;bottom:26px;padding:24px;border-radius:24px;background:rgba(255,255,255,.14);backdrop-filter:blur(8px);color:#fff}
-+
-+    .section-head{display:flex;justify-content:space-between;gap:16px;align-items:end;flex-wrap:wrap;margin-bottom:26px}
-+    .section-head h2{margin:0;font-size:clamp(28px,4vw,44px)}
-+    .section-head p{margin:0;max-width:640px;color:var(--muted);line-height:1.8}
-+
-+    .portfolio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
-+    .card{background:var(--surface);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:.2s ease}
-+    .card:hover{transform:translateY(-3px)}
-+    .card img{width:100%;aspect-ratio:4/3;object-fit:cover}
-+    .card-body{padding:18px}
-+    .badge{display:inline-block;padding:7px 11px;border-radius:999px;background:#f2e7dc;color:var(--brand-dark);font-size:12px;font-weight:700;margin-bottom:12px}
-+    .card h3{margin:0 0 8px;font-size:18px}
-+    .card p{margin:0;color:var(--muted);line-height:1.7;font-size:14px}
-+    .card small{display:block;margin-top:12px;color:var(--muted)}
-+
-+    .uploader-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-+    .panel{padding:28px}
-+    .field{display:grid;gap:9px;margin-bottom:16px}
-+    .field label{font-weight:700;color:var(--brand-dark)}
-+    .field input,.field textarea{width:100%;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:#fff;font:inherit;color:var(--text)}
-+    .field textarea{min-height:120px;resize:vertical}
-+    .dropzone{display:grid;place-items:center;min-height:240px;padding:24px;border:1.5px dashed #c8b19f;border-radius:24px;background:#fcf7f1;text-align:center;transition:.2s ease}
-+    .dropzone.dragover{background:#f1e6da;border-color:var(--brand)}
-+    .dropzone strong{font-size:20px;color:var(--brand-dark);display:block;margin-bottom:10px}
-+    .dropzone p{margin:0;color:var(--muted);line-height:1.7}
-+    #fileInput{display:none}
-+    .preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;margin-top:16px}
-+    .preview{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#efe4d8}
-+    .preview img{width:100%;aspect-ratio:1/1;object-fit:cover}
-+    .preview span{position:absolute;left:8px;right:8px;bottom:8px;background:rgba(0,0,0,.55);color:#fff;font-size:11px;padding:6px 8px;border-radius:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
-+    .help,.status{color:var(--muted);line-height:1.7;font-size:14px}
-+    .status{color:var(--brand-dark);font-weight:700;margin-top:10px}
-+
-+    .contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-+    .contact-card{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--shadow)}
-+    .contact-card strong{display:block;font-size:18px;margin-bottom:10px}
-+    .contact-card p,.contact-card a{color:var(--muted);line-height:1.7}
-+
-+    footer{padding:24px 20px 50px;text-align:center;color:var(--muted)}
-+
-+    .lightbox{position:fixed;inset:0;background:rgba(18,14,11,.9);display:none;align-items:center;justify-content:center;padding:20px;z-index:40}
-+    .lightbox.open{display:flex}
-+    .lightbox-inner{position:relative;max-width:min(1100px,95vw);width:100%;display:grid;justify-items:center;gap:12px}
-+    .lightbox img{max-width:100%;max-height:78vh;border-radius:22px}
-+    .lightbox-caption{color:#fff;text-align:center;line-height:1.7}
-+    .ctrl{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.24);padding:10px 13px;border-radius:999px;cursor:pointer}
-+    #btnPrev{left:8px} #btnNext{right:8px}
-+    #btnClose{top:0;right:0;transform:none}
-+
-+    @media (max-width: 980px){
-+      .hero-grid,.uploader-wrap,.contact-grid{grid-template-columns:1fr}
-+      .hero-points{grid-template-columns:1fr}
-+    }
-+    @media (max-width: 720px){
-+      .hero-copy{padding:30px 22px}
-+      .topbar{flex-direction:column;align-items:flex-start}
-+      .section{padding:56px 0}
-+    }
-+  </style>
-+</head>
-+<body>
-+  <script>
-+    const SITE = {
-+      name: '제이엘디자인',
-+      tagline: '공간을 새롭게, 삶을 아름답게',
-+      phone: '010-6436-6401',
-+      email: 'jldesign77@naver.com',
-+      kakao: 'http://pf.kakao.com/_xeigDxj/chat'
-+    };
-+    const IMG_BASE = 'wm_images';
-+    const IMG_FALLBACK = 'images';
-+    const CUSTOM_STORAGE_KEY = 'jl-design-custom-projects-v2';
-+  </script>
-+
-+  <header class="hero">
-+    <div class="container">
-+      <div class="topbar">
-+        <div class="brand">
-+          <img id="logo" src="jl_monogram_luxe.svg" alt="제이엘디자인 로고">
-+          <div class="brand-text">
-+            <strong id="brandName">제이엘디자인</strong>
-+            <span>Interior Design Studio</span>
-+          </div>
-+        </div>
-+        <nav>
-+          <a href="#portfolio">포트폴리오</a>
-+          <a href="#uploader">이미지 업로드</a>
-+          <a href="#contact">문의하기</a>
-+        </nav>
-+      </div>
-+
-+      <div class="hero-grid">
-+        <div class="hero-copy">
-+          <span class="eyebrow">Interior Design</span>
-+          <h1>공간의 분위기를 바꾸는, 더 보기 좋은 홈페이지.</h1>
-+          <p id="tagline">제이엘디자인의 시공 결과를 더 잘 보여줄 수 있도록 첫 화면을 깔끔하게 정리하고, 포트폴리오를 직접 올릴 수 있는 기능까지 한 화면에 넣었습니다.</p>
-+          <div class="hero-actions">
-+            <a class="btn primary" id="btnKakao" href="#" target="_blank" rel="noopener">카카오톡 상담</a>
-+            <a class="btn secondary" href="#portfolio">포트폴리오 보기</a>
-+          </div>
-+          <div class="hero-points">
-+            <div><strong>고급스러운 첫 화면</strong><span>인테리어 업체답게 이미지와 톤을 정리했습니다.</span></div>
-+            <div><strong>직접 업로드</strong><span>이미지를 여러 장 한 번에 끌어다 놓을 수 있습니다.</span></div>
-+            <div><strong>짧은 설명 추가</strong><span>프로젝트별 설명을 같이 입력해 포트폴리오 완성도를 높였습니다.</span></div>
-+          </div>
-+        </div>
-+        <div class="hero-visual" aria-label="대표 포트폴리오 이미지">
-+          <div class="caption">
-+            <span class="eyebrow" style="color:#fff;margin-bottom:8px">Featured Space</span>
-+            <strong style="display:block;font-size:28px;margin-bottom:8px">따뜻한 소재와 정돈된 조명</strong>
-+            <span style="line-height:1.7">제이엘디자인이 만드는 공간의 분위기를 첫 화면에서 바로 느낄 수 있게 구성했습니다.</span>
-+          </div>
-+        </div>
-+      </div>
-+    </div>
-+  </header>
-+
-+  <main>
-+    <section class="section" id="portfolio">
-+      <div class="container">
-+        <div class="section-head">
-+          <div>
-+            <span class="eyebrow">Portfolio</span>
-+            <h2>시공 포트폴리오</h2>
-+          </div>
-+          <p id="portfolioNote">기존 프로젝트와 브라우저에서 직접 올린 프로젝트를 함께 보여줍니다.</p>
-+        </div>
-+        <div class="portfolio-grid" id="grid"></div>
-+      </div>
-+    </section>
-+
-+    <section class="section" id="uploader">
-+      <div class="container">
-+        <div class="section-head">
-+          <div>
-+            <span class="eyebrow">Uploader</span>
-+            <h2>이미지 여러 장 업로드</h2>
-+          </div>
-+          <p>프로젝트명, 짧은 설명을 적고 이미지를 한 번에 드래그앤드랍하거나 선택해서 추가하세요.</p>
-+        </div>
-+
-+        <div class="uploader-wrap">
-+          <div class="panel">
-+            <div class="field">
-+              <label for="projectTitle">프로젝트명</label>
-+              <input id="projectTitle" type="text" maxlength="60" placeholder="예: 청담동 쇼룸 인테리어">
-+            </div>
-+            <div class="field">
-+              <label for="projectDesc">간단한 설명</label>
-+              <textarea id="projectDesc" maxlength="240" placeholder="예: 우드와 간접조명 중심의 따뜻한 쇼룸 공간입니다."></textarea>
-+            </div>
-+            <div class="actions">
-+              <button class="btn primary" id="saveProject" type="button">포트폴리오 저장</button>
-+              <button class="btn secondary" id="resetUploader" type="button">초기화</button>
-+            </div>
-+            <div class="status" id="uploadStatus">아직 선택된 이미지가 없습니다.</div>
-+            <p class="help">정적 사이트라서 업로드한 항목은 서버가 아니라 현재 브라우저에 저장됩니다. 같은 브라우저에서는 계속 보이지만 다른 기기와 자동 동기화되지는 않습니다.</p>
-+          </div>
-+
-+          <div class="panel">
-+            <label class="dropzone" id="dropzone" for="fileInput">
-+              <input id="fileInput" type="file" accept="image/*" multiple>
-+              <div>
-+                <strong>이미지를 여기로 끌어다 놓으세요</strong>
-+                <p>또는 클릭해서 여러 장을 한 번에 선택할 수 있습니다.</p>
-+              </div>
-+            </label>
-+            <div class="preview-grid" id="previewGrid"></div>
-+          </div>
-+        </div>
-+      </div>
-+    </section>
-+
-+    <section class="section" id="contact">
-+      <div class="container">
-+        <div class="section-head">
-+          <div>
-+            <span class="eyebrow">Contact</span>
-+            <h2>문의하기</h2>
-+          </div>
-+          <p>전화, 이메일, 카카오톡으로 바로 상담 연결이 가능하도록 정리했습니다.</p>
-+        </div>
-+        <div class="contact-grid" id="contactList"></div>
-+      </div>
-+    </section>
-+  </main>
-+
-+  <footer>© <span id="year"></span> <span id="brandFoot">제이엘디자인</span></footer>
-+
-+  <div class="lightbox" id="lightbox" aria-modal="true" role="dialog">
-+    <div class="lightbox-inner">
-+      <img id="lightImg" alt="">
-+      <button class="ctrl" id="btnClose">닫기</button>
-+      <button class="ctrl" id="btnPrev">←</button>
-+      <button class="ctrl" id="btnNext">→</button>
-+      <div class="lightbox-caption" id="lightboxCaption"></div>
-+    </div>
-+  </div>
-+
-+  <script>
-+    const $ = (selector) => document.querySelector(selector);
-+    const grid = $('#grid');
-+    const portfolioNote = $('#portfolioNote');
-+    const contactList = $('#contactList');
-+    const dropzone = $('#dropzone');
-+    const fileInput = $('#fileInput');
-+    const previewGrid = $('#previewGrid');
-+    const uploadStatus = $('#uploadStatus');
-+    const projectTitle = $('#projectTitle');
-+    const projectDesc = $('#projectDesc');
-+    const saveProject = $('#saveProject');
-+    const resetUploader = $('#resetUploader');
-+    const lightbox = $('#lightbox');
-+    const lightImg = $('#lightImg');
-+    const lightboxCaption = $('#lightboxCaption');
-+    const btnClose = $('#btnClose');
-+    const btnPrev = $('#btnPrev');
-+    const btnNext = $('#btnNext');
-+
-+    let selectedFiles = [];
-+    let projects = [];
-+    let baseProjects = [];
-+    let current = { projectIndex: -1, imageIndex: 0 };
-+
-+    document.title = SITE.name;
-+    $('#brandName').textContent = SITE.name;
-+    $('#brandFoot').textContent = SITE.name;
-+    $('#year').textContent = new Date().getFullYear();
-+    $('#tagline').textContent = SITE.tagline + ' 이제 포트폴리오도 직접 사이트에서 추가할 수 있습니다.';
-+    $('#btnKakao').href = SITE.kakao;
-+    $('#logo').onerror = () => { $('#logo').style.display = 'none'; };
-+
-+    contactList.innerHTML = `
-+      <article class="contact-card">
-+        <strong>전화 문의</strong>
-+        <p>빠르게 상담받고 싶다면 전화로 문의해 주세요.</p>
-+        <a href="tel:${SITE.phone.replaceAll('-', '')}">${SITE.phone}</a>
-+      </article>
-+      <article class="contact-card">
-+        <strong>이메일 문의</strong>
-+        <p>도면이나 참고 자료를 함께 보내기 좋습니다.</p>
-+        <a href="mailto:${SITE.email}">${SITE.email}</a>
-+      </article>
-+      <article class="contact-card">
-+        <strong>카카오톡 상담</strong>
-+        <p>간단한 견적이나 일정 문의를 편하게 남겨주세요.</p>
-+        <a href="${SITE.kakao}" target="_blank" rel="noopener">카카오톡 채널 열기</a>
-+      </article>
-+    `;
-+
-+    function readCustomProjects() {
-+      try {
-+        const parsed = JSON.parse(localStorage.getItem(CUSTOM_STORAGE_KEY) || '[]');
-+        return Array.isArray(parsed) ? parsed : [];
-+      } catch (error) {
-+        console.error(error);
-+        return [];
-+      }
-+    }
-+
-+    function writeCustomProjects(items) {
-+      localStorage.setItem(CUSTOM_STORAGE_KEY, JSON.stringify(items));
-+    }
-+
-+    function normalizeProjects(list) {
-+      return list.map((project) => {
-+        const images = Array.isArray(project.images) ? [...project.images] : [];
-+        const coverIndex = images.indexOf(project.cover);
-+        if (coverIndex > 0) {
-+          const [cover] = images.splice(coverIndex, 1);
-+          images.unshift(cover);
-+        }
-+        return { ...project, images, isCustom: false };
-+      }).reverse();
-+    }
-+
-+    function createCustomId(title) {
-+      return `custom-${Date.now()}-${title.toLowerCase().replace(/[^a-z0-9가-힣]+/g, '-').slice(0, 20)}`;
-+    }
-+
-+    function getProjectThumb(project) {
-+      if (project.isCustom) return project.images[0];
-+      return `${IMG_BASE}/${project.id}/${project.cover}`;
-+    }
-+
-+    function renderProjects() {
-+      grid.innerHTML = '';
-+      if (!projects.length) {
-+        grid.innerHTML = '<p class="help">아직 등록된 포트폴리오가 없습니다.</p>';
-+        return;
-+      }
-+      const fragment = document.createDocumentFragment();
-+      projects.forEach((project, index) => {
-+        const card = document.createElement('article');
-+        card.className = 'card';
-+        card.tabIndex = 0;
-+        card.innerHTML = `
-+          <img src="${getProjectThumb(project)}" alt="${project.title || project.id}">
-+          <div class="card-body">
-+            <span class="badge">${project.isCustom ? '직접 업로드' : '기존 포트폴리오'}</span>
-+            <h3>${project.title || project.id}</h3>
-+            <p>${project.desc || '설명이 없습니다.'}</p>
-+            <small>이미지 ${project.images.length}장</small>
-+          </div>
-+        `;
-+        if (!project.isCustom) {
-+          const image = card.querySelector('img');
-+          image.onerror = () => {
-+            image.onerror = null;
-+            image.src = `${IMG_FALLBACK}/${project.id}/${project.cover}`;
-+          };
-+        }
-+        const open = () => openLightbox(index, 0);
-+        card.addEventListener('click', open);
-+        card.addEventListener('keydown', (event) => {
-+          if (event.key === 'Enter' || event.key === ' ') {
-+            event.preventDefault();
-+            open();
-+          }
-+        });
-+        fragment.appendChild(card);
-+      });
-+      grid.appendChild(fragment);
-+      portfolioNote.textContent = `총 ${projects.length}개의 프로젝트가 보입니다. 직접 업로드한 항목도 바로 아래에 같이 표시됩니다.`;
-+    }
-+
-+    function openLightbox(projectIndex, imageIndex) {
-+      current = { projectIndex, imageIndex };
-+      const project = projects[projectIndex];
-+      const imageName = project.images[imageIndex];
-+      if (project.isCustom) {
-+        lightImg.src = imageName;
-+      } else {
-+        lightImg.src = `${IMG_BASE}/${project.id}/${imageName}`;
-+        lightImg.onerror = () => {
-+          lightImg.onerror = null;
-+          lightImg.src = `${IMG_FALLBACK}/${project.id}/${imageName}`;
-+        };
-+      }
-+      lightboxCaption.innerHTML = `<strong>${project.title || project.id}</strong><br>${project.desc || ''}`;
-+      lightbox.classList.add('open');
-+    }
-+
-+    function moveLightbox(step) {
-+      const project = projects[current.projectIndex];
-+      current.imageIndex = (current.imageIndex + step + project.images.length) % project.images.length;
-+      openLightbox(current.projectIndex, current.imageIndex);
-+    }
-+
-+    btnClose.addEventListener('click', () => lightbox.classList.remove('open'));
-+    btnPrev.addEventListener('click', () => moveLightbox(-1));
-+    btnNext.addEventListener('click', () => moveLightbox(1));
-+    lightbox.addEventListener('click', (event) => {
-+      if (event.target === lightbox) lightbox.classList.remove('open');
-+    });
-+    window.addEventListener('keydown', (event) => {
-+      if (!lightbox.classList.contains('open')) return;
-+      if (event.key === 'Escape') lightbox.classList.remove('open');
-+      if (event.key === 'ArrowLeft') moveLightbox(-1);
-+      if (event.key === 'ArrowRight') moveLightbox(1);
-+    });
-+
-+    function updatePreview() {
-+      previewGrid.innerHTML = '';
-+      if (!selectedFiles.length) {
-+        uploadStatus.textContent = '아직 선택된 이미지가 없습니다.';
-+        return;
-+      }
-+      selectedFiles.forEach((file) => {
-+        const item = document.createElement('div');
-+        item.className = 'preview';
-+        item.innerHTML = `<img src="${file.dataUrl}" alt="${file.name}"><span>${file.name}</span>`;
-+        previewGrid.appendChild(item);
-+      });
-+      uploadStatus.textContent = `${selectedFiles.length}장의 이미지를 선택했습니다.`;
-+    }
-+
-+    function resetForm(message = '아직 선택된 이미지가 없습니다.') {
-+      selectedFiles = [];
-+      projectTitle.value = '';
-+      projectDesc.value = '';
-+      fileInput.value = '';
-+      updatePreview();
-+      uploadStatus.textContent = message;
-+    }
-+
-+    async function filesToEntries(fileList) {
-+      const imageFiles = Array.from(fileList).filter((file) => file.type.startsWith('image/'));
-+      const entries = await Promise.all(imageFiles.map((file) => new Promise((resolve, reject) => {
-+        const reader = new FileReader();
-+        reader.onload = () => resolve({ name: file.name, dataUrl: reader.result });
-+        reader.onerror = reject;
-+        reader.readAsDataURL(file);
-+      })));
-+      selectedFiles = [...selectedFiles, ...entries];
-+      updatePreview();
-+    }
-+
-+    dropzone.addEventListener('dragover', (event) => {
-+      event.preventDefault();
-+      dropzone.classList.add('dragover');
-+    });
-+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-+    dropzone.addEventListener('drop', async (event) => {
-+      event.preventDefault();
-+      dropzone.classList.remove('dragover');
-+      await filesToEntries(event.dataTransfer.files);
-+    });
-+    fileInput.addEventListener('change', async (event) => {
-+      await filesToEntries(event.target.files);
-+    });
-+
-+    saveProject.addEventListener('click', () => {
-+      const title = projectTitle.value.trim();
-+      const desc = projectDesc.value.trim();
-+      if (!title) {
-+        uploadStatus.textContent = '프로젝트명을 입력해 주세요.';
-+        projectTitle.focus();
-+        return;
-+      }
-+      if (!selectedFiles.length) {
-+        uploadStatus.textContent = '이미지를 1장 이상 추가해 주세요.';
-+        return;
-+      }
-+      const customProjects = readCustomProjects();
-+      customProjects.unshift({
-+        id: createCustomId(title),
-+        title,
-+        desc,
-+        cover: selectedFiles[0].name,
-+        images: selectedFiles.map((file) => file.dataUrl),
-+        isCustom: true,
-+        savedAt: new Date().toISOString()
-+      });
-+      writeCustomProjects(customProjects);
-+      projects = [...customProjects, ...baseProjects];
-+      renderProjects();
-+      resetForm('포트폴리오가 저장되었습니다. 위 목록에서 바로 확인할 수 있습니다.');
-+    });
-+
-+    resetUploader.addEventListener('click', () => {
-+      resetForm('입력값을 초기화했습니다.');
-+    });
-+
-+    fetch('projects.json?v=' + Date.now(), { cache: 'no-store' })
-+      .then((response) => {
-+        if (!response.ok) throw new Error('HTTP ' + response.status);
-+        return response.json();
-+      })
-+      .then((list) => {
-+        baseProjects = normalizeProjects(list);
-+        projects = [...readCustomProjects(), ...baseProjects];
-+        renderProjects();
-+      })
-+      .catch((error) => {
-+        console.error(error);
-+        baseProjects = [];
-+        projects = [...readCustomProjects()];
-+        renderProjects();
-+        portfolioNote.textContent = '기존 프로젝트를 불러오지 못했지만 직접 업로드 기능은 사용할 수 있습니다.';
-+      });
-+  </script>
-+</body>
-+</html>
- 
-EOF
-)
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>제이엘디자인</title>
+  <meta name="description" content="제이엘디자인 — 인테리어 시공 갤러리와 문의">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta property="og:title" content="제이엘디자인">
+  <meta property="og:description" content="공간을 새롭게, 삶을 아름답게">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nicekriss.github.io/">
+  <style>
+    :root{
+      --bg:#f4efe8;
+      --panel:#fffdfa;
+      --line:#e3d7ca;
+      --text:#2a211d;
+      --muted:#766960;
+      --brand:#7b5d49;
+      --brand-soft:#ede2d7;
+      --shadow:0 16px 40px rgba(66,45,31,.08);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:var(--bg);color:var(--text)}
+    header{position:relative;padding:80px 16px 64px;text-align:center;background:
+      linear-gradient(180deg,rgba(18,15,13,.18),rgba(18,15,13,.48)),
+      url('wm_images/flowlap/cover.jpg') center/cover no-repeat;color:#fff;overflow:hidden}
+    header::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(0,0,0,.18));pointer-events:none}
+    header > *{position:relative;z-index:1}
+    h1{margin:14px 0 8px;font-size:38px;letter-spacing:.3px}
+    .tagline{margin:0 auto;max-width:760px;color:rgba(255,255,255,.82);line-height:1.8}
+    #logo{height:70px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.22))}
+    nav{display:flex;gap:14px;justify-content:center;padding:14px 16px;border-bottom:1px solid var(--line);background:rgba(255,253,250,.94);position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}
+    nav a{color:var(--text);text-decoration:none;padding:9px 14px;border-radius:999px}
+    nav a:hover{background:var(--brand-soft)}
+    .cta{margin-top:22px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .btn{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);color:#fff;text-decoration:none;padding:11px 16px;border-radius:999px}
+    .btn:hover{background:rgba(255,255,255,.22)}
+    .btn-solid{background:var(--brand);border:1px solid var(--brand);color:#fff}
+    .btn-solid:hover{background:#684c3a}
+    section{max-width:1200px;margin:32px auto;padding:0 16px}
+    h2{font-size:24px;margin:0 0 18px}
+    .section-copy{color:var(--muted);margin:-6px 0 18px;line-height:1.7}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease;box-shadow:var(--shadow)}
+    .card:hover{transform:translateY(-2px)}
+    .thumb{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+    .meta{padding:14px 16px}
+    .title{font-size:17px;font-weight:700;margin-bottom:7px}
+    .desc{font-size:13px;color:var(--muted);line-height:1.7}
+    .badge{display:inline-block;margin-bottom:10px;font-size:11px;font-weight:700;letter-spacing:.04em;background:var(--brand-soft);color:var(--brand);padding:6px 10px;border-radius:999px}
+    .contact-list{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .contact-card,.uploader{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+    .contact-card{padding:20px}
+    .contact-card strong{display:block;margin-bottom:8px;font-size:18px}
+    .contact-card p,.contact-card a{color:var(--muted);line-height:1.7;text-decoration:none}
+    footer{text-align:center;color:var(--muted);padding:28px 16px;border-top:1px solid var(--line);margin-top:40px}
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;padding:24px;z-index:50}
+    .lightbox.open{display:flex}.lightbox img{max-width:95vw;max-height:84vh;border-radius:14px}
+    .ctrl{position:absolute;top:16px;background:rgba(255,255,255,.12);border:1px solid #ffffff22;color:#fff;padding:8px 12px;border-radius:10px;cursor:pointer;backdrop-filter:blur(4px)}
+    #btnClose{right:16px}#btnPrev,#btnNext{top:50%;transform:translateY(-50%)}#btnPrev{left:16px}#btnNext{right:16px}
+    .counter{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.35);padding:6px 10px;border-radius:8px;font-size:12px}
+    .uploader{padding:22px}
+    .uploader-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .field{display:grid;gap:8px;margin-bottom:14px}
+    .field label{font-weight:700}
+    .field input,.field textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--text);font:inherit}
+    .field textarea{min-height:120px;resize:vertical}
+    .dropzone{border:1.5px dashed #cdb8a8;border-radius:18px;background:#fbf7f2;min-height:220px;padding:24px;display:grid;place-items:center;text-align:center;transition:.15s ease}
+    .dropzone.dragover{background:#f2e7db;border-color:var(--brand)}
+    .dropzone strong{display:block;font-size:20px;margin-bottom:10px;color:var(--brand)}
+    .dropzone p{margin:0;color:var(--muted);line-height:1.7}
+    #fileInput{display:none}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;margin-top:14px}
+    .preview{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#efe4da}
+    .preview img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}
+    .preview span{position:absolute;left:8px;right:8px;bottom:8px;background:rgba(0,0,0,.56);color:#fff;border-radius:10px;padding:5px 7px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .status,.help{font-size:13px;line-height:1.7;color:var(--muted)}
+    .status{margin-top:10px;color:var(--brand);font-weight:700}
+    @media (max-width: 840px){.uploader-grid,.contact-list{grid-template-columns:1fr}}
+    @media (prefers-reduced-motion: reduce){.card,.dropzone{transition:none}}
+  </style>
+</head>
+<body>
+  <script>
+    const SITE = {
+      name   : "제이엘디자인",
+      tagline: "공간을 새롭게, 삶을 아름답게",
+      phone  : "010-6436-6401",
+      email  : "jldesign77@naver.com",
+      kakao  : "http://pf.kakao.com/_xeigDxj/chat"
+    };
+    const IMG_BASE = "wm_images";
+    const IMG_FALLBACK = "images";
+    const CUSTOM_STORAGE_KEY = "jl-design-custom-projects-v3";
+    document.title = SITE.name;
+  </script>
+
+  <header>
+    <img id="logo" src="jl_monogram_luxe.svg" alt="제이엘디자인 로고" decoding="async" loading="eager">
+    <h1 id="brand">제이엘디자인</h1>
+    <p class="tagline" id="tagline">공간을 새롭게, 삶을 아름답게</p>
+    <div class="cta" aria-label="빠른 문의">
+      <a class="btn" id="btnCall" href="#" aria-label="전화 걸기">전화 문의</a>
+      <a class="btn" id="btnKakao" href="http://pf.kakao.com/_xeigDxj/chat" target="_blank" rel="noopener">카카오톡 상담</a>
+      <a class="btn" id="btnEmail" href="#" aria-label="이메일 보내기">이메일 문의</a>
+    </div>
+  </header>
+
+  <nav role="navigation" aria-label="주요 메뉴">
+    <a href="#projects" aria-current="page">시공 갤러리</a>
+    <a href="#uploader">포트폴리오 업로드</a>
+    <a href="#contact">문의하기</a>
+  </nav>
+
+  <section id="projects">
+    <h2>시공 갤러리</h2>
+    <p class="section-copy" id="galleryNote">기존 트폴리오와 직접 추가한 프로젝트를 함께 보여드립니다.</p>
+    <div class="grid" id="grid" aria-live="polite"></div>
+  </section>
+
+  <section id="uploader">
+    <h2>포트폴리오 직접 올리기</h2>
+    <p class="section-copy">프로젝트명과 간단한 설명을 적고 이미지를 여러 장 한 번에 올릴 수 있습니다. 업로드한 항목은 현재 브라우저에 저장됩니다.</p>
+    <div class="uploader">
+      <div class="uploader-grid">
+        <div>
+          <div class="field">
+            <label for="projectTitle">프로젝트명</label>
+            <input id="projectTitle" type="text" maxlength="60" placeholder="예: 성수동 쇼룸">
+          </div>
+          <div class="field">
+            <label for="projectDesc">간단한 설명</label>
+            <textarea id="projectDesc" maxlength="240" placeholder="예: 우드 톤과 간접조명 중심의 따뜻한 상업 공간입니다."></textarea>
+          </div>
+          <div class="actions">
+            <button class="btn btn-solid" id="saveProject" type="button">저장하기</button>
+            <button class="btn btn-solid" id="resetUploader" type="button" style="background:#a58a76;border-color:#a58a76">초기화</button>
+          </div>
+          <div class="status" id="uploadStatus">아직 선택된 이미지가 없습니다.</div>
+          <div class="help">정적 사이트 특성상 서버 업로드가 아니라 브라우저 저장소(localStorage)에 저장됩니다.</div>
+        </div>
+        <div>
+          <label class="dropzone" id="dropzone" for="fileInput">
+            <input id="fileInput" type="file" accept="image/*" multiple>
+            <div>
+              <strong>이미지를 끌어다 놓으세요</strong>
+              <p>또는 클릭해서 여러 장을 한 번에 선택할 수 있습니다.</p>
+            </div>
+          </label>
+          <div class="preview-grid" id="previewGrid"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>문의하기</h2>
+    <div class="contact-list" id="contactList"></div>
+  </section>
+
+  <footer>© <span id="year"></span> <span id="brandFoot">제이엘디자인</span></footer>
+
+  <div class="lightbox" id="lightbox" aria-modal="true" role="dialog" aria-label="이미지 보기">
+    <img id="lightImg" alt="">
+    <button class="ctrl" id="btnClose">닫기</button>
+    <button class="ctrl" id="btnPrev" aria-label="이전 이미지">←</button>
+    <button class="ctrl" id="btnNext" aria-label="다음 이미지">→</button>
+    <div class="counter" id="counter" aria-live="polite"></div>
+  </div>
+
+  <script>
+    const $ = s => document.querySelector(s);
+    const logo = $('#logo');
+    const grid = $('#grid');
+    const lightbox = $('#lightbox');
+    const lightImg = $('#lightImg');
+    const counter = $('#counter');
+    const btnClose = $('#btnClose');
+    const btnPrev = $('#btnPrev');
+    const btnNext = $('#btnNext');
+    const galleryNote = $('#galleryNote');
+    const dropzone = $('#dropzone');
+    const fileInput = $('#fileInput');
+    const previewGrid = $('#previewGrid');
+    const uploadStatus = $('#uploadStatus');
+    const projectTitle = $('#projectTitle');
+    const projectDesc = $('#projectDesc');
+    const saveProject = $('#saveProject');
+    const resetUploader = $('#resetUploader');
+
+    let baseProjects = [];
+    let projects = [];
+    let selectedFiles = [];
+    let cur = { p:-1, i:0 };
+
+    logo.onerror = () => logo.style.display = 'none';
+    $('#brand').textContent = SITE.name;
+    $('#tagline').textContent = SITE.tagline;
+    $('#brandFoot').textContent = SITE.name;
+    $('#year').textContent = new Date().getFullYear();
+    $('#btnCall').href = 'tel:' + SITE.phone.replaceAll('-', '');
+    $('#btnEmail').href = 'mailto:' + SITE.email;
+    $('#btnKakao').href = SITE.kakao;
+    $('#contactList').innerHTML = `
+      <article class="contact-card"><strong>전화 문의</strong><p><a href="tel:${SITE.phone.replaceAll('-', '')}">${SITE.phone}</a></p></article>
+      <article class="contact-card"><strong>이메일 문의</strong><p><a href="mailto:${SITE.email}">${SITE.email}</a></p></article>
+      <article class="contact-card"><strong>카카오톡 상담</strong><p><a href="${SITE.kakao}" target="_blank" rel="noopener">채널 바로가기</a></p></article>
+    `;
+
+    function setImgWithFallback(el, primary, fallback) {
+      el.src = primary;
+      el.onerror = () => { el.onerror = null; el.src = fallback; };
+    }
+
+    function readCustomProjects() {
+      try {
+        const list = JSON.parse(localStorage.getItem(CUSTOM_STORAGE_KEY) || '[]');
+        return Array.isArray(list) ? list : [];
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    }
+
+    function writeCustomProjects(list) {
+      localStorage.setItem(CUSTOM_STORAGE_KEY, JSON.stringify(list));
+    }
+
+    function normalizeBaseProjects(list) {
+      return list.map(p => {
+        const imgs = Array.isArray(p.images) ? [...p.images] : [];
+        const i = imgs.indexOf(p.cover);
+        if (i > 0) {
+          const [cover] = imgs.splice(i, 1);
+          imgs.unshift(cover);
+        }
+        return { ...p, images: imgs, isCustom:false };
+      }).reverse();
+    }
+
+    function mergeProjects() {
+      const custom = readCustomProjects().sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
+      projects = [...custom, ...baseProjects];
+      galleryNote.textContent = `총 ${projects.length}개의 프로젝트가 보입니다. 직접 올린 항목도 바로 함께 표시됩니다.`;
+    }
+
+    function card(p, idx) {
+      const wrap = document.createElement('article');
+      wrap.className = 'card';
+      wrap.tabIndex = 0;
+      const thumb = document.createElement('img');
+      thumb.className = 'thumb';
+      thumb.alt = p.title || p.id;
+      thumb.decoding = 'async';
+      thumb.loading = 'lazy';
+      if (p.isCustom) thumb.src = p.images[0];
+      else setImgWithFallback(thumb, `${IMG_BASE}/${p.id}/${p.cover}`, `${IMG_FALLBACK}/${p.id}/${p.cover}`);
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      meta.innerHTML = `${p.isCustom ? '<span class="badge">직접 업로드</span>' : ''}<div class="title">${p.title || p.id}</div><div class="desc">${p.desc || ''}</div>`;
+      wrap.append(thumb, meta);
+      const open = () => openLightbox(idx, 0);
+      wrap.addEventListener('click', open);
+      wrap.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+      return wrap;
+    }
+
+    function render() {
+      grid.innerHTML = '';
+      if (!projects.length) {
+        grid.innerHTML = '<p class="section-copy">표시할 포트폴리오가 없습니다.</p>';
+        return;
+      }
+      const frag = document.createDocumentFragment();
+      projects.forEach((p, idx) => frag.appendChild(card(p, idx)));
+      grid.appendChild(frag);
+    }
+
+    function openLightbox(pIndex, imgIndex) {
+      cur = { p: pIndex, i: imgIndex };
+      const p = projects[cur.p];
+      const src = p.images[cur.i];
+      if (p.isCustom) lightImg.src = src;
+      else setImgWithFallback(lightImg, `${IMG_BASE}/${p.id}/${src}`, `${IMG_FALLBACK}/${p.id}/${src}`);
+      counter.textContent = `${cur.i + 1} / ${p.images.length} · ${p.title || p.id}`;
+      lightbox.classList.add('open');
+    }
+    function closeLightbox() { lightbox.classList.remove('open'); }
+    function prev() { const p = projects[cur.p]; cur.i = (cur.i - 1 + p.images.length) % p.images.length; openLightbox(cur.p, cur.i); }
+    function next() { const p = projects[cur.p]; cur.i = (cur.i + 1) % p.images.length; openLightbox(cur.p, cur.i); }
+
+    btnClose.onclick = closeLightbox; btnPrev.onclick = prev; btnNext.onclick = next;
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+    window.addEventListener('keydown', e => {
+      if (!lightbox.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'ArrowRight') next();
+    });
+
+    function updatePreview() {
+      previewGrid.innerHTML = '';
+      if (!selectedFiles.length) {
+        uploadStatus.textContent = '아직 선택된 이미지가 없습니다.';
+        return;
+      }
+      selectedFiles.forEach(file => {
+        const item = document.createElement('div');
+        item.className = 'preview';
+        item.innerHTML = `<img src="${file.dataUrl}" alt="${file.name}"><span>${file.name}</span>`;
+        previewGrid.appendChild(item);
+      });
+      uploadStatus.textContent = `${selectedFiles.length}장의 이미지를 선택했습니다.`;
+    }
+
+    function resetForm(message = '아직 선택된 이미지가 없습니다.') {
+      selectedFiles = [];
+      projectTitle.value = '';
+      projectDesc.value = '';
+      fileInput.value = '';
+      updatePreview();
+      uploadStatus.textContent = message;
+    }
+
+    async function handleFiles(fileList) {
+      const imageFiles = Array.from(fileList).filter(file => file.type.startsWith('image/'));
+      const entries = await Promise.all(imageFiles.map(file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve({ name:file.name, dataUrl:reader.result });
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      })));
+      selectedFiles = [...selectedFiles, ...entries];
+      updatePreview();
+    }
+
+    dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', async e => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      await handleFiles(e.dataTransfer.files);
+    });
+    fileInput.addEventListener('change', async e => { await handleFiles(e.target.files); });
+
+    saveProject.addEventListener('click', () => {
+      const title = projectTitle.value.trim();
+      const desc = projectDesc.value.trim();
+      if (!title) { uploadStatus.textContent = '프로젝트명을 입력해 주세요.'; projectTitle.focus(); return; }
+      if (!selectedFiles.length) { uploadStatus.textContent = '이미지를 1장 이상 추가해 주세요.'; return; }
+      const custom = readCustomProjects();
+      custom.unshift({
+        id:`custom-${Date.now()}`,
+        title,
+        desc,
+        cover:selectedFiles[0].name,
+        images:selectedFiles.map(file => file.dataUrl),
+        isCustom:true,
+        savedAt:new Date().toISOString()
+      });
+      writeCustomProjects(custom);
+      mergeProjects();
+      render();
+      resetForm('저장되었습니다. 위 시공 갤러리에서 바로 확인할 수 있습니다.');
+    });
+
+    resetUploader.addEventListener('click', () => resetForm('입력값을 초기화했습니다.'));
+
+    fetch('projects.json?v=' + Date.now(), { cache:'no-store' })
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(list => {
+        if (!Array.isArray(list)) throw new Error('JSON is not an array');
+        baseProjects = normalizeBaseProjects(list);
+        mergeProjects();
+        render();
+      })
+      .catch(error => {
+        console.error(error);
+        baseProjects = [];
+        mergeProjects();
+        render();
+        galleryNote.textContent = '기존 프로젝트를 불러오지 못했지만 직접 업로드 기능은 사용할 수 있습니다.';
+      });
+  </script>
+</body>
+</html>
